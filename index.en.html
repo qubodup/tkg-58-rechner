@@ -1,0 +1,87 @@
+<html>
+<head>
+<title>Calculator for compensation according to Telekommunikationsgesetz (TKG) § 58 Entstörung</title>
+<style>#out {background-color: yellow; color: black;</style>
+</head>
+<body>
+
+<nav>[<a href="index.html">Deutsche Version hier</a>]</nav>
+<h1>Calculator for compensation according to <a href="https://www.gesetze-im-internet.de/tkg_2021/__58.html" target="_blank">Telekommunikationsgesetz (TKG) § 58 Entstörung</a></h1>
+
+<noscript>
+<strong>Sorry, doesn't work without JavaScript.</strong>
+</noscript>
+
+<p>When did you report the disruption to the provider?<br>
+<input type="date" required id="report"> </p>
+
+<p>When was the disruption resolved?<br>
+<input type="date" required id="end"></p>
+
+<p>How much do you pay monthly?<br>
+<input type="number" required step="0.01" id="pay" min="0"> EUR</p>
+
+<button id="calc">Calculate</button>
+<p id="out"></p>
+
+<script>
+function datediff(first, second) { // https://stackoverflow.com/a/543152/188159
+    return Math.round((second - first) / (1000 * 60 * 60 * 24));
+}
+
+function calc() {
+  const report = document.getElementById("report").valueAsDate;
+  const end = document.getElementById("end").valueAsDate;
+  const pay = document.getElementById("pay").value;
+  
+  const pay10 = (Math.round(Math.max(5, pay/10) * 100) / 100);
+  const pay20 = (Math.round(Math.max(10,pay/5) * 100) / 100);
+  
+  var total = 0;
+  var text = "";
+  
+  if (report === null || end === null) {
+	document.getElementById("out").innerHTML = "Please fill both date fields"
+  } else if ( datediff(report,end) <= 3 ){
+	document.getElementById("out").innerHTML = datediff(report,end) + " Days. Compensation only after 3rd fully disrupted day."
+  } else if ( datediff(report,end) > 3 ){
+	const days = datediff(report,end);
+	
+		total += pay10;
+		text += "Day 1: + " + pay10.toFixed(2) + " EUR<br>"
+		
+	if ( days > 4 ) {
+		total += pay10;
+		text += "Day 2: + " + pay10.toFixed(2) + " EUR<br>"
+	}
+	if ( days == 6 ) {
+		total += pay20;
+		text += "Day 3: + " + pay20.toFixed(2) + " EUR<br>"
+	}
+	else if ( days > 6 ) {
+		const highdays = days - 5;
+		total += highdays * pay20;
+		text += "Days 3–" + (highdays + 3) + ": + " + highdays + " * " + pay20.toFixed(2) + " EUR<br>"
+	}
+	text += "Total " + (Math.round(total * 100) / 100).toFixed(2) + " EUR compensation"
+	document.getElementById("out").innerHTML = text;
+  }
+}
+
+document.getElementById("end").addEventListener("change", calc);
+document.getElementById("report").addEventListener("change", calc);
+document.getElementById("pay").addEventListener("change", calc);
+document.getElementById("pay").addEventListener("paste", calc);
+document.getElementById("calc").addEventListener("click", calc);
+
+
+</script>
+
+<h2>FAQ</h2>
+
+<p>Q: Is this legal advice?</p>
+<p>A: Nope.</p>
+
+<p>Q: Is this complete, up-to-date, and guaranteed to be accurate?</p>
+<p>A: No, unknown and nope.</p>
+</body>
