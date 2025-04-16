@@ -5,7 +5,7 @@
 </head>
 <body>
 
-
+<nav>[<a href="index.en.html">English version here</a>]</nav>
 <h1>Rechner für Entschädigung nach <a href="https://www.gesetze-im-internet.de/tkg_2021/__58.html" target="_blank">Telekommunikationsgesetz (TKG) § 58 Entstörung</a></h1>
 
 <noscript>
@@ -34,8 +34,8 @@ function calc() {
   const end = document.getElementById("end").valueAsDate;
   const pay = document.getElementById("pay").value;
   
-  const pay10 = (Math.floor(Math.max(5, pay/10) * 100) / 100);
-  const pay20 = (Math.floor(Math.max(10,pay/5) * 100) / 100);
+  const pay10 = (Math.round(Math.max(5, pay/10) * 100) / 100);
+  const pay20 = (Math.round(Math.max(10,pay/5) * 100) / 100);
   
   var total = 0;
   var text = "";
@@ -48,22 +48,22 @@ function calc() {
 	const days = datediff(report,end);
 	
 		total += pay10;
-		text += "Tag 1: + " + pay10 + " EUR<br>"
+		text += "Tag 1: + " + pay10.toFixed(2) + " EUR<br>"
 		
 	if ( days > 4 ) {
 		total += pay10;
-		text += "Tag 2: + " + pay10 + " EUR<br>"
+		text += "Tag 2: + " + pay10.toFixed(2) + " EUR<br>"
 	}
 	if ( days == 6 ) {
 		total += pay20;
-		text += "Tag 3: + " + pay20 + " EUR<br>"
+		text += "Tag 3: + " + pay20.toFixed(2) + " EUR<br>"
 	}
 	else if ( days > 6 ) {
 		const highdays = days - 5;
 		total += highdays * pay20;
-		text += "Tage 3–" + (highdays + 3) + ": + " + highdays + " * " + pay20 + " EUR<br>"
+		text += "Tage 3–" + (highdays + 3) + ": + " + highdays + " * " + pay20.toFixed(2) + " EUR<br>"
 	}
-	text += "Gesamt " + (Math.floor(total * 100) / 100).toFixed(2) + " EUR Entschädigung"
+	text += "Gesamt " + (Math.round(total * 100) / 100).toFixed(2) + " EUR Entschädigung"
 	document.getElementById("out").innerHTML = text;
   }
 }
