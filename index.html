@@ -1,0 +1,87 @@
+<html>
+<head>
+<title>Rechner für Entschädigung nach Telekommunikationsgesetz (TKG) § 58 Entstörung</title>
+<style>#out {background-color: yellow; color: black;</style>
+</head>
+<body>
+
+
+<h1>Rechner für Entschädigung nach <a href="https://www.gesetze-im-internet.de/tkg_2021/__58.html" target="_blank">Telekommunikationsgesetz (TKG) § 58 Entstörung</a></h1>
+
+<noscript>
+<strong>Sorry, ohne JavaScript funktioniert hier nichts.</strong>
+</noscript>
+
+<p>Wann hast du die Störung dem Anbieter gemeldet?<br>
+<input type="date" required id="report"> </p>
+
+<p>Wann wurde die Störung behoben?<br>
+<input type="date" required id="end"></p>
+
+<p>Wie viel zahlst du monatlich?<br>
+<input type="number" required step="0.01" id="pay" min="0"> EUR</p>
+
+<button id="calc">Berechnen</button>
+<p id="out"></p>
+
+<script>
+function datediff(first, second) { // https://stackoverflow.com/a/543152/188159
+    return Math.round((second - first) / (1000 * 60 * 60 * 24));
+}
+
+function calc() {
+  const report = document.getElementById("report").valueAsDate;
+  const end = document.getElementById("end").valueAsDate;
+  const pay = document.getElementById("pay").value;
+  
+  const pay10 = (Math.floor(Math.max(5, pay/10) * 100) / 100);
+  const pay20 = (Math.floor(Math.max(10,pay/5) * 100) / 100);
+  
+  var total = 0;
+  var text = "";
+  
+  if (report === null || end === null) {
+	document.getElementById("out").innerHTML = "Bitte beide Datumsfelder ausfüllen"
+  } else if ( datediff(report,end) <= 3 ){
+	document.getElementById("out").innerHTML = datediff(report,end) + " Tage. Entschädigung gibt es erst ab dem 3. Tag vollständigen Ausfalls."
+  } else if ( datediff(report,end) > 3 ){
+	const days = datediff(report,end);
+	
+		total += pay10;
+		text += "Tag 1: + " + pay10 + " EUR<br>"
+		
+	if ( days > 4 ) {
+		total += pay10;
+		text += "Tag 2: + " + pay10 + " EUR<br>"
+	}
+	if ( days == 6 ) {
+		total += pay20;
+		text += "Tag 3: + " + pay20 + " EUR<br>"
+	}
+	else if ( days > 6 ) {
+		const highdays = days - 5;
+		total += highdays * pay20;
+		text += "Tage 3–" + (highdays + 3) + ": + " + highdays + " * " + pay20 + " EUR<br>"
+	}
+	text += "Gesamt " + (Math.floor(total * 100) / 100).toFixed(2) + " EUR Entschädigung"
+	document.getElementById("out").innerHTML = text;
+  }
+}
+
+document.getElementById("end").addEventListener("change", calc);
+document.getElementById("report").addEventListener("change", calc);
+document.getElementById("pay").addEventListener("change", calc);
+document.getElementById("pay").addEventListener("paste", calc);
+document.getElementById("calc").addEventListener("click", calc);
+
+
+</script>
+
+<h2>FAQ</h2>
+
+<p>F: Ist dies eine Rechtsberatung?</p>
+<p>A: Nö.</p>
+
+<p>F: Ist dies vollständig, aktuell und garantiert korrekt?</p>
+<p>A: Nein, unbekannt und nö.</p>
+</body>
